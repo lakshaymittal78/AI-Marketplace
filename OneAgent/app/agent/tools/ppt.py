@@ -3,6 +3,7 @@ import os
 import json
 from pptx import Presentation
 from pptx.util import Inches, Pt
+from fastapi.responses import FileResponse
 
 async def handle_ppt(topic: str) -> str:
     async with httpx.AsyncClient() as client:
@@ -64,7 +65,9 @@ Return ONLY this JSON format:
     filepath = f"outputs/{filename}"
     os.makedirs("outputs", exist_ok=True)
     prs.save(filepath)
-
-    base_url = os.getenv("RAILWAY_PUBLIC_DOMAIN", "localhost:8000")
-    download_url = f"https://{base_url}/download/{filename}"
-    return f"PPT created successfully! [Download your presentation]({download_url})"
+@app.get("/download/{filename}")
+async def download_file(filename: str):
+    filepath = f"outputs/{filename}"
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="File not found")
+    return FileResponse(path=filepath, filename=filename, media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation")

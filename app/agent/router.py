@@ -31,6 +31,7 @@ async def decide_tool(message: str) -> str:
                         - PPT (create a presentation)
                         - SEARCH (search the web for information)
                         - EMAIL (send an email)
+                        - RAG (question about uploaded documents, "in my document", "according to the pdf")
                         Reply with ONLY one word, nothing else. 
                         """,
                     }
@@ -49,5 +50,7 @@ async def decide_tool(message: str) -> str:
         return "SEARCH"
     elif "EMAIL" in result:
         return "EMAIL"
+    elif "RAG" in result:
+        return "RAG"
     else:
         return "CHAT"

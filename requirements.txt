@@ -14,14 +14,13 @@ idna==3.11
 Jinja2==3.1.6
 jsonpatch==1.33
 jsonpointer==3.0.0
-langchain==0.3.25
-langchain-core==1.2.18
+langchain==1.2.15
+langchain-core==1.2.22
 langchain-groq==1.1.2
-langgraph==1.0.10
+langgraph==1.1.6
 langgraph-checkpoint==4.0.1
-langgraph-prebuilt==1.0.8
-langgraph-sdk==0.3.10
-langsmith==0.7.16
+langgraph-prebuilt==1.0.9
+langgraph-sdk==0.3.13
 MarkupSafe==3.0.3
 orjson==3.11.7
 packaging==26.0
@@ -31,7 +30,7 @@ psycopg2-binary==2.9.11
 pycparser==3.0
 pydantic==2.12.5
 pydantic_core==2.41.5
-PyPDF2==3.0.1
+pypdf
 python-dotenv==1.2.2
 python-jose==3.5.0
 python-multipart
@@ -46,3 +45,6 @@ starlette==0.52.1
 tenacity==9.1.4
 typing_extensions==4.15.0
 urllib3==2.6.3
+pytest
+pytest-asyncio
+httpx

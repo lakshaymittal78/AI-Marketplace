@@ -1,0 +1,37 @@
+[33m5e921ef[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m fix: resolve langchain dependency conflicts
+[33mb601765[m fix: remove conflicting langsmith pin
+[33m37f12a7[m fix: remove conflicting langchain-core pin
+[33m37ecfeb[m fix: update github actions versions
+[33m2110450[m fix: remove secrets from git
+[33m75b66e5[m add CI/CD AND PYTEST
+[33m9088096[m req.txt
+[33m6305a28[m many changes
+[33m82c0dcb[m Revise README for improved clarity and detail
+[33m076baa7[m fix PPT download link
+[33m62bc512[m remove duplicate OneAgent folder
+[33m9009d05[m sync root main.py
+[33mc05db60[m fix main.py
+[33me1fafdf[m add root route and PPT download
+[33m4ee9a35[m add PPT download link
+[33m9fc999a[m add PPT download link
+[33m6058ad5[m fix chat route slash
+[33m41671a5[m move backend to root
+[33m7bb8121[m add railpack config
+[33m6779295[m trigger backend redeploy
+[33mf455dcb[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Add marketplace/vercel.json
+[33m3f4f0af[m trigger redeploy
+[33m7b1dc1b[m force redeploy CORS fix
+[33mb214b7a[m fix CORS credentials conflict
+[33m9b10e3b[m Fix: add missing Zap icon import in Landing.tsx and clean up App.tsx
+[33m69064de[m fix CORS for Vercel
+[33m7a51605[m Fix: trim requirements.txt to essential backend packages
+[33m9619d53[m trigger redeploy
+[33md7caf7e[m Fix: update primp version and make API URL configurable via env vars
+[33m8e2d430[m Fix: update ddgs from 9.11.2 to 9.11.3 (version 9.11.2 does not exist on PyPI)
+[33m3e526d3[m Fix: regenerate requirements.txt as UTF-8
+[33m316130d[m Fix: clean requirements.txt encoding for Railway
+[33m4030491[m Fix: make Railway build install ddgs
+[33md30ca07[m Deploy: make CORS configurable and add Procfile
+[33md38fdf7[m Enhance README with OneAgent details and setup
+[33mea8e712[m Initial commit: OneAgent backend + marketplace UI
+[33m3e75aee[m Initial commit

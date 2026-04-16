@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 load_dotenv()
+from app.limter import limiter
 from app.routers import upload
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,9 +21,7 @@ def init_db():
     Base.metadata.create_all(bind=engine)
 
 init_db()
-
 app = FastAPI(redirect_slashes=False)
-limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(

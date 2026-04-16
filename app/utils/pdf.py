@@ -1,5 +1,5 @@
 from io import BytesIO
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 
 def parse_pdf(file_bytes: bytes) -> str:
     reader = PdfReader(BytesIO(file_bytes))

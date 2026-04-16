@@ -5,6 +5,7 @@ from app.schemas.user import UserCreate, UserResponse, UserLogin
 from app.models.user import User
 from app.utils.hashing import hash_password, verify_password
 from app.utils.jwt import create_access_token
+from app.utils.token_tracker import TokenTracker
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -18,11 +19,25 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 @router.post("/login")
-def login(user : UserLogin, db: Session = Depends(get_db)):
+async def login(user : UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.username == user.username).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
     if not verify_password(user.password, db_user.password):
         raise HTTPException(status_code=401, detail="Invalid password")
     token = create_access_token({"user_id": db_user.id})
-    return {"access_token": token, "token_type": "bearer"}
+    
+    # Get token info
+    tracker = TokenTracker(db_user.id)
+    token_info = {
+        "used": await tracker.get_current_usage(),
+        "limit": tracker.get_tokens_limit(),
+        "remaining": await tracker.get_remaining_tokens(),
+        "status": await tracker.check_warning()
+    }
+    
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "tokens": token_info
+    }

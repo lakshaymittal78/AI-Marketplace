@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 import json
 import traceback
 import asyncio
+from app.utils.token_tracker import TokenTracker
 from main import limiter
 router = APIRouter(prefix="/chat", tags=["chat"])
 agent = build_graph()
@@ -56,15 +57,28 @@ async def chat(request: ChatRequest, current_user = Depends(get_current_user), d
         "db": db
     }
 
+    tracker = TokenTracker(current_user.id)
+    tokens_used = len(request.message.split()) * 2# Simple token estimation
     result = await agent.ainvoke(initial_state)
+    await tracker.increment_token(tokens_used)
     await save_to_redis(redis_key, json.dumps(result.get("history", [])))
-    return {"response": result.get("response", ""), "history": result.get("history", []), "agent_used": result.get("tool", "")}
+    return {"response": result.get("response", ""), "history": result.get("history", []), "agent_used": result.get("tool", ""),"tokens":{"used": await tracker.get_current_usage(), "remaining": await tracker.get_remaining_tokens(),"status": await tracker.check_warning()}}
 
 @router.get("/history")
 async def get_history(current_user = Depends(get_current_user)):
     redis_key = f"chat_history:{current_user.id}"
     stored_history = await get_from_redis(redis_key)
     return {"history": json.loads(stored_history) if stored_history else []}
+
+@router.get("/tokens")
+async def get_tokens(current_user = Depends(get_current_user)):
+    tracker = TokenTracker(current_user.id)
+    return {
+        "used": await tracker.get_current_usage(),
+        "limit": tracker.get_tokens_limit(),
+        "remaining": await tracker.get_remaining_tokens(),
+        "status": await tracker.check_warning()
+    }
 
 @router.websocket("/ws")
 async def websocket_chat(websocket: WebSocket):
@@ -80,6 +94,8 @@ async def websocket_chat(websocket: WebSocket):
     if not user:
         await websocket.close(code=4001, reason="Unauthorized")
         return
+
+    tracker = TokenTracker(user.get("user_id"))
 
     await websocket.accept()
 
@@ -143,6 +159,15 @@ async def websocket_chat(websocket: WebSocket):
 
                 if websocket.client_state == WebSocketState.CONNECTED:
                     await websocket.send_text("[DONE]")
+                    tokens_used = len(data.split()) * 2# Simple token estimation
+                    await tracker.increment_token(tokens_used)
+                    await websocket.send_text(
+                        "__tokens__" + json.dumps({
+                            "used": await tracker.get_current_usage(),
+                            "remaining": await tracker.get_remaining_tokens(),
+                            "status": await tracker.check_warning()
+                        })
+                    )
 
             except asyncio.TimeoutError:
                 if websocket.client_state == WebSocketState.CONNECTED:

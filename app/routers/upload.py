@@ -1,5 +1,5 @@
 import hashlib
-from fastapi import APIRouter, UploadFile, File, Depends
+from fastapi import APIRouter, UploadFile, File, Depends, Request
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
@@ -8,13 +8,14 @@ from app.utils.pdf import parse_pdf, chunk_text
 from app.agent.tools.rag import embed_chunks, store_chunks
 from app.dependencies.auth import get_current_user  
 from app.models.documents import DocumentChunk
-from main import limiter
+from app.limter import limiter
 
 router = APIRouter()
 
 @router.post("/upload")
 @limiter.limit("10/minute")
 async def upload_pdf(
+    request: Request,
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
